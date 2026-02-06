@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0d6efd">
+    <meta name="description" content="Dashboard Administrativo Completo - Desenvolvido por Felipe Andrade">
+    <title>Dashboard Administrativo - Felipe Andrade</title>
+    
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    
+    <!-- Estilos -->
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    
+    <!-- Bibliotecas -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <span class="material-symbols-outlined">dashboard</span>
+                <h1 data-i18n="app-title">Dashboard</h1>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="#inicio" class="nav-item active" data-page="inicio">
+                <span class="material-symbols-outlined">home</span>
+                <span class="nav-text" data-i18n="nav-home">Início</span>
+            </a>
+            <a href="#vendas" class="nav-item" data-page="vendas">
+                <span class="material-symbols-outlined">shopping_cart</span>
+                <span class="nav-text" data-i18n="nav-sales">Vendas</span>
+            </a>
+            <a href="#produtos" class="nav-item" data-page="produtos">
+                <span class="material-symbols-outlined">inventory_2</span>
+                <span class="nav-text" data-i18n="nav-products">Produtos</span>
+            </a>
+            <a href="#pedidos" class="nav-item" data-page="pedidos">
+                <span class="material-symbols-outlined">receipt_long</span>
+                <span class="nav-text" data-i18n="nav-orders">Pedidos</span>
+            </a>
+            <a href="#despesas" class="nav-item" data-page="despesas">
+                <span class="material-symbols-outlined">payments</span>
+                <span class="nav-text" data-i18n="nav-expenses">Despesas</span>
+            </a>
+            <a href="#analises" class="nav-item" data-page="analises">
+                <span class="material-symbols-outlined">bar_chart</span>
+                <span class="nav-text" data-i18n="nav-analytics">Análises</span>
+            </a>
+            <a href="#clientes" class="nav-item" data-page="clientes">
+                <span class="material-symbols-outlined">group</span>
+                <span class="nav-text" data-i18n="nav-customers">Clientes</span>
+            </a>
+            <a href="#configuracoes" class="nav-item" data-page="configuracoes">
+                <span class="material-symbols-outlined">settings</span>
+                <span class="nav-text" data-i18n="nav-settings">Configurações</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="user-profile" id="userProfile">
+                <div class="user-avatar">
+                    <span class="material-symbols-outlined">person</span>
+                </div>
+                <div class="user-info">
+                    <p class="user-name" id="userName">Felipe Andrade</p>
+                    <p class="user-role" id="userRole">Desenvolvedor</p>
+                </div>
+            </div>
+            <div class="credits">
+                <p>Desenvolvido por <strong>Felipe Andrade</strong></p>
+                <p class="credits-year">© 2026 Todos os direitos reservados</p>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Conteúdo Principal -->
+    <main class="main-content">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <button class="mobile-toggle" id="mobileToggle" aria-label="Abrir menu">
+                    <span class="material-symbols-outlined">menu</span>
+                </button>
+                <h2 id="pageTitle" data-i18n="page-title-home">Painel de Controle</h2>
+            </div>
+            <div class="header-center">
+                <div class="search-bar">
+                    <span class="material-symbols-outlined">search</span>
+                    <input type="text" placeholder="Buscar pedidos, clientes, produtos..." id="searchInput" data-i18n-placeholder="search-placeholder">
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="language-selector">
+                    <button class="lang-btn" id="langBtn" aria-label="Selecionar idioma">
+                        <span class="material-symbols-outlined">language</span>
+                        <span class="lang-text">PT</span>
+                    </button>
+                    <div class="lang-menu" id="langMenu">
+                        <button class="lang-option" data-lang="pt-BR">
+                            <span>🇧🇷</span>
+                            <span>Português</span>
+                        </button>
+                        <button class="lang-option" data-lang="en-US">
+                            <span>🇺🇸</span>
+                            <span>English</span>
+                        </button>
+                        <button class="lang-option" data-lang="es-ES">
+                            <span>🇪🇸</span>
+                            <span>Español</span>
+                        </button>
+                    </div>
+                </div>
+                <button class="theme-toggle" id="themeToggle" aria-label="Alternar tema" title="Modo: Auto">
+                    <span class="material-symbols-outlined">dark_mode</span>
+                </button>
+                <button class="notification-btn" id="notificationBtn" aria-label="Notificações">
+                    <span class="material-symbols-outlined">notifications</span>
+                    <span class="notification-badge">3</span>
+                </button>
+                <button class="user-btn" id="userBtn" aria-label="Perfil do usuário">
+                    <div class="user-avatar-small">FA</div>
+                </button>
+            </div>
+        </header>
+
+        <!-- Container de Conteúdo Dinâmico -->
+        <div id="appContent"></div>
+    </main>
+
+    <!-- Modal de Login -->
+    <div class="modal active" id="loginModal">
+        <div class="modal-content login-modal">
+            <div class="login-header">
+                <div class="login-logo">
+                    <span class="material-symbols-outlined">dashboard</span>
+                    <h2 data-i18n="login-title">Dashboard Admin</h2>
+                </div>
+                <p class="login-subtitle" data-i18n="login-subtitle">Desenvolvido por Felipe Andrade</p>
+            </div>
+            <div class="modal-body">
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="loginEmail" data-i18n="login-email">E-mail</label>
+                        <input type="email" id="loginEmail" placeholder="seu@email.com" required value="admin@dashboard.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword" data-i18n="login-password">Senha</label>
+                        <input type="password" id="loginPassword" placeholder="••••••••" required value="admin123">
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="rememberMe" checked>
+                            <span data-i18n="login-remember">Lembrar de mim</span>
+                        </label>
+                    </div>
+                    <button type="submit" class="btn-primary btn-block">
+                        <span class="material-symbols-outlined">login</span>
+                        <span data-i18n="btn-login">Entrar</span>
+                    </button>
+                    <p class="login-hint" data-i18n="login-hint">Dica: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="1071747d797e5074716378727f7162743e737f7d">[email&#160;protected]</a> / admin123</p>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Novo Pedido -->
+    <div class="modal" id="newOrderModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Criar Novo Pedido</h3>
+                <button class="modal-close" aria-label="Fechar">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="newOrderForm">
+                    <div class="form-group">
+                        <label for="customerName">Cliente</label>
+                        <input type="text" id="customerName" placeholder="Nome do cliente" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="productName">Produto</label>
+                        <input type="text" id="productName" placeholder="Nome do produto" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="orderValue">Valor</label>
+                            <input type="text" id="orderValue" placeholder="R$ 0,00" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="orderStatus">Status</label>
+                            <select id="orderStatus" required>
+                                <option value="processando">Processando</option>
+                                <option value="transito">Em Trânsito</option>
+                                <option value="entregue">Entregue</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary" id="cancelOrderBtn">Cancelar</button>
+                        <button type="submit" class="btn-primary">
+                            <span class="material-symbols-outlined">save</span>
+                            Criar Pedido
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Painel de Notificações -->
+    <div class="notifications-panel" id="notificationsPanel">
+        <div class="notifications-header">
+            <h3>Notificações</h3>
+            <button class="mark-all-read" id="markAllRead">Marcar todas como lidas</button>
+        </div>
+        <div class="notifications-list">
+            <div class="notification-item unread">
+                <div class="notification-icon success">
+                    <span class="material-symbols-outlined">check_circle</span>
+                </div>
+                <div class="notification-content">
+                    <p class="notification-title">Novo pedido recebido</p>
+                    <p class="notification-message">Pedido #12846 de João Silva - R$ 3.299,00</p>
+                    <span class="notification-time">há 5 minutos</span>
+                </div>
+                <button class="notification-close" aria-label="Remover">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <div class="notification-item unread">
+                <div class="notification-icon warning">
+                    <span class="material-symbols-outlined">inventory</span>
+                </div>
+                <div class="notification-content">
+                    <p class="notification-title">Estoque baixo</p>
+                    <p class="notification-message">O produto "iPhone 15 Pro" está com apenas 5 unidades</p>
+                    <span class="notification-time">há 1 hora</span>
+                </div>
+                <button class="notification-close" aria-label="Remover">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <div class="notification-item unread">
+                <div class="notification-icon info">
+                    <span class="material-symbols-outlined">local_shipping</span>
+                </div>
+                <div class="notification-content">
+                    <p class="notification-title">Pedido enviado</p>
+                    <p class="notification-message">Pedido #12844 saiu para entrega</p>
+                    <span class="notification-time">há 3 horas</span>
+                </div>
+                <button class="notification-close" aria-label="Remover">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Menu do Usuário -->
+    <div class="user-menu" id="userMenu">
+        <div class="user-menu-header">
+            <div class="user-avatar-large">FA</div>
+            <div class="user-menu-info">
+                <p class="user-menu-name" id="userMenuName">Felipe Andrade</p>
+                <p class="user-menu-email"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="ed8b8881849d88c38c83899f8c8988ad88808c8481c38e8280">[email&#160;protected]</a></p>
+            </div>
+        </div>
+        <div class="user-menu-items">
+            <a href="#perfil" class="user-menu-item">
+                <span class="material-symbols-outlined">person</span>
+                <span>Meu Perfil</span>
+            </a>
+            <a href="#configuracoes" class="user-menu-item">
+                <span class="material-symbols-outlined">settings</span>
+                <span>Configurações</span>
+            </a>
+            <a href="#ajuda" class="user-menu-item">
+                <span class="material-symbols-outlined">help</span>
+                <span>Ajuda & Suporte</span>
+            </a>
+            <div class="user-menu-divider"></div>
+            <a href="#" class="user-menu-item logout" id="logoutBtn">
+                <span class="material-symbols-outlined">logout</span>
+                <span data-i18n="btn-logout">Sair</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">
+        <div class="toast-icon">
+            <span class="material-symbols-outlined">check_circle</span>
+        </div>
+        <div class="toast-content">
+            <p class="toast-title">Sucesso!</p>
+            <p class="toast-message">Operação realizada com sucesso</p>
+        </div>
+        <button class="toast-close" aria-label="Fechar">
+            <span class="material-symbols-outlined">close</span>
+        </button>
+    </div>
+
+    <!-- Scripts -->
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+    <script src="data.js"></script>
+    <script src="i18n.js"></script>
+    <script src="pages.js"></script>
+    <script src="crud.js"></script>
+    <script src="script.js"></script>
