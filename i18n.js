@@ -4,7 +4,7 @@
 
 const translations = {
     'pt-BR': {
-        'EstoqueManager': 'EstoqueManager',
+        'app-title': 'EstoqueManager',
         'login-title': 'EstoqueManager',
         // Menu
         'nav-home': 'Início',
