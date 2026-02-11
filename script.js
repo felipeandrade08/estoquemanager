@@ -893,12 +893,20 @@ function initMonthlySalesChart() {
     
     const colors = getChartColors();
     
-    // CORREÇÃO: Destruir gráfico anterior antes de criar novo
+    // ✅ CORREÇÃO DEFINITIVA: Destruir gráfico anterior antes de criar novo
+    // Método 1: Buscar instância do Chart.js diretamente do canvas
+    const existingChart = Chart.getChart(ctx);
+    if (existingChart) {
+        existingChart.destroy();
+    }
+    
+    // Método 2: Garantir que a referência no state também seja limpa
     if (state.charts.monthly) {
         state.charts.monthly.destroy();
         state.charts.monthly = null;
     }
     
+    // Criar novo gráfico
     state.charts.monthly = new Chart(ctx, {
         type: 'line',
         data: {
