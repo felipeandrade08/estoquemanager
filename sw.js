@@ -1,12 +1,16 @@
 // Service Worker para PWA
 const CACHE_NAME = 'dashboard-v1';
 const urlsToCache = [
-  '/',
-  '/index.html',
-  '/styles.css',
-  '/script.js',
-  '/i18n.js',
-  '/manifest.json'
+  './',
+  './index.html',
+  './styles.css',
+  './script.js',
+  './data.js',
+  './i18n.js',
+  './pages.js',
+  './crud.js',
+  './manifest.json',
+  './icon-192.png'
 ];
 
 // Instalação do Service Worker

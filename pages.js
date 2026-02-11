@@ -29,6 +29,26 @@ const pagesComplete = {
         title: { 'pt-BR': 'Gestão de Clientes', 'en-US': 'Customer Management', 'es-ES': 'Gestión de Clientes' },
         render: () => `
             <section class="page-section">
+                <div class="metrics-grid" style="margin-bottom: 2rem;">
+                    <article class="metric-card">
+                        <div class="metric-icon success">
+                            <span class="material-symbols-outlined">group</span>
+                        </div>
+                        <div class="metric-content">
+                            <p class="metric-label">Total de Clientes</p>
+                            <h4 class="metric-value">${mockData.customers.length}</h4>
+                        </div>
+                    </article>
+                    <article class="metric-card">
+                        <div class="metric-icon warning">
+                            <span class="material-symbols-outlined">star</span>
+                        </div>
+                        <div class="metric-content">
+                            <p class="metric-label">Clientes VIP</p>
+                            <h4 class="metric-value">${mockData.customers.filter(c => c.status === 'vip').length}</h4>
+                        </div>
+                    </article>
+                </div>
                 <div class="section-header">
                     <h3>Lista de Clientes</h3>
                     <button class="btn-primary" onclick="openAddCustomerModal()">
@@ -89,10 +109,30 @@ const pagesComplete = {
         `
     },
     
-    produtos: {
+produtos: {
         title: { 'pt-BR': 'Gestão de Produtos', 'en-US': 'Product Management', 'es-ES': 'Gestión de Productos' },
         render: () => `
             <section class="page-section">
+                <div class="metrics-grid" style="margin-bottom: 2rem;">
+                    <article class="metric-card">
+                        <div class="metric-icon info">
+                            <span class="material-symbols-outlined">inventory</span>
+                        </div>
+                        <div class="metric-content">
+                            <p class="metric-label">Total de Produtos</p>
+                            <h4 class="metric-value">${mockData.products.length}</h4>
+                        </div>
+                    </article>
+                    <article class="metric-card">
+                        <div class="metric-icon danger">
+                            <span class="material-symbols-outlined">warning</span>
+                        </div>
+                        <div class="metric-content">
+                            <p class="metric-label">Estoque Baixo</p>
+                            <h4 class="metric-value">${mockData.products.filter(p => p.stock < p.minStock).length}</h4>
+                        </div>
+                    </article>
+                </div>
                 <div class="section-header">
                     <h3>Catálogo de Produtos</h3>
                     <button class="btn-primary" onclick="openAddProductModal()">
@@ -211,33 +251,35 @@ const pagesComplete = {
         title: { 'pt-BR': 'Controle de Despesas', 'en-US': 'Expense Control', 'es-ES': 'Control de Gastos' },
         render: () => `
             <section class="page-section">
+                <div class="section-header">
+                    <h3>Registro de Despesas</h3>
+                    <button class="btn-primary" onclick="openAddExpenseModal()">
+                        <span class="material-symbols-outlined">add_card</span>
+                        <span>Adicionar Despesa</span>
+                    </button>
+                </div>
+                
                 <div class="metrics-grid" style="margin-bottom: 2rem;">
                     <article class="metric-card">
                         <div class="metric-icon expenses">
                             <span class="material-symbols-outlined">payments</span>
                         </div>
                         <div class="metric-content">
-                            <p class="metric-label">Despesas do Mês</p>
+                            <p class="metric-label">Total de Despesas</p>
                             <h4 class="metric-value">${formatCurrency(mockData.expenses.reduce((sum, e) => sum + e.value, 0))}</h4>
                         </div>
                     </article>
                     <article class="metric-card">
                         <div class="metric-icon warning">
-                            <span class="material-symbols-outlined">pending</span>
+                            <span class="material-symbols-outlined">pending_actions</span>
                         </div>
                         <div class="metric-content">
-                            <p class="metric-label">Despesas Pendentes</p>
+                            <p class="metric-label">Total Pendente</p>
                             <h4 class="metric-value">${formatCurrency(mockData.expenses.filter(e => e.status === 'pending').reduce((sum, e) => sum + e.value, 0))}</h4>
                         </div>
                     </article>
                 </div>
-                <div class="section-header">
-                    <h3>Registro de Despesas</h3>
-                    <button class="btn-primary" onclick="openAddExpenseModal()">
-                        <span class="material-symbols-outlined">add</span>
-                        <span>Adicionar Despesa</span>
-                    </button>
-                </div>
+
                 <div class="table-container">
                     <table class="orders-table">
                         <thead>
@@ -303,37 +345,42 @@ const pagesComplete = {
     
     vendas: {
         title: { 'pt-BR': 'Gestão de Vendas', 'en-US': 'Sales Management', 'es-ES': 'Gestión de Ventas' },
-        render: () => `
-            <section class="metrics-section">
-                <h3>Desempenho de Vendas</h3>
-                <div class="metrics-grid">
-                    <article class="metric-card">
-                        <div class="metric-icon sales">
-                            <span class="material-symbols-outlined">show_chart</span>
-                        </div>
-                        <div class="metric-content">
-                            <p class="metric-label">Vendas Hoje</p>
-                            <h4 class="metric-value">R$ 12.450,00</h4>
-                        </div>
-                    </article>
-                    <article class="metric-card">
-                        <div class="metric-icon orders">
-                            <span class="material-symbols-outlined">shopping_bag</span>
-                        </div>
-                        <div class="metric-content">
-                            <p class="metric-label">Ticket Médio</p>
-                            <h4 class="metric-value">R$ 487,50</h4>
-                        </div>
-                    </article>
+        render: () => {
+            const totalSales = mockData.orders.reduce((sum, order) => sum + order.value, 0);
+            const avgTicket = mockData.orders.length > 0 ? totalSales / mockData.orders.length : 0;
+            
+            return `
+                <section class="metrics-section">
+                    <h3>Desempenho de Vendas</h3>
+                    <div class="metrics-grid">
+                        <article class="metric-card">
+                            <div class="metric-icon sales">
+                                <span class="material-symbols-outlined">show_chart</span>
+                            </div>
+                            <div class="metric-content">
+                                <p class="metric-label">Vendas Totais</p>
+                                <h4 class="metric-value">${formatCurrency(totalSales)}</h4>
+                            </div>
+                        </article>
+                        <article class="metric-card">
+                            <div class="metric-icon orders">
+                                <span class="material-symbols-outlined">shopping_bag</span>
+                            </div>
+                            <div class="metric-content">
+                                <p class="metric-label">Ticket Médio</p>
+                                <h4 class="metric-value">${formatCurrency(avgTicket)}</h4>
+                            </div>
+                        </article>
+                    </div>
+                </section>
+                <div class="chart-card">
+                    <h3>Vendas Mensais</h3>
+                    <div class="chart-container" style="height: 400px;">
+                        <canvas id="monthlySalesChart"></canvas>
+                    </div>
                 </div>
-            </section>
-            <div class="chart-card">
-                <h3>Vendas Mensais</h3>
-                <div class="chart-container" style="height: 400px;">
-                    <canvas id="monthlySalesChart"></canvas>
-                </div>
-            </div>
-        `
+            `;
+        }
     },
     
     configuracoes: {
@@ -389,15 +436,15 @@ const pagesComplete = {
                         <h4>Perfil</h4>
                         <div class="form-group">
                             <label>Nome Completo</label>
-                            <input type="text" id="profileName" value="Felipe Andrade" class="filter-select">
+                            <input type="text" id="profileName" value="${state.userData?.name || 'Felipe Andrade'}" class="filter-select">
                         </div>
                         <div class="form-group">
                             <label>Email</label>
-                            <input type="email" id="profileEmail" value="felipe.andrade@email.com" class="filter-select">
+                            <input type="email" id="profileEmail" value="${state.userData?.email || 'felipe.andrade@email.com'}" class="filter-select">
                         </div>
                         <div class="form-group">
                             <label>Cargo</label>
-                            <input type="text" id="profileRole" value="Desenvolvedor" class="filter-select">
+                            <input type="text" id="profileRole" value="${state.userData?.role || 'Desenvolvedor'}" class="filter-select">
                         </div>
                     </div>
                     
@@ -428,6 +475,11 @@ const pagesComplete = {
 
 // Funções auxiliares de renderização
 function renderMetricCards() {
+    const totalSales = mockData.orders.reduce((sum, order) => sum + order.value, 0);
+    const totalOrders = mockData.orders.length;
+    const totalExpenses = mockData.expenses.reduce((sum, exp) => sum + exp.value, 0);
+    const netProfit = totalSales - totalExpenses;
+
     return `
         <article class="metric-card clickable" data-metric="vendas">
             <div class="metric-icon sales">
@@ -435,7 +487,7 @@ function renderMetricCards() {
             </div>
             <div class="metric-content">
                 <p class="metric-label">Vendas Totais</p>
-                <h4 class="metric-value">R$ 45.890,00</h4>
+                <h4 class="metric-value">${formatCurrency(totalSales)}</h4>
                 <div class="metric-change positive">
                     <span class="material-symbols-outlined">arrow_upward</span>
                     <span>12,5% vs mês anterior</span>
@@ -448,7 +500,7 @@ function renderMetricCards() {
             </div>
             <div class="metric-content">
                 <p class="metric-label">Pedidos</p>
-                <h4 class="metric-value">1.248</h4>
+                <h4 class="metric-value">${totalOrders}</h4>
                 <div class="metric-change positive">
                     <span class="material-symbols-outlined">arrow_upward</span>
                     <span>8,3% vs mês anterior</span>
@@ -461,7 +513,7 @@ function renderMetricCards() {
             </div>
             <div class="metric-content">
                 <p class="metric-label">Despesas</p>
-                <h4 class="metric-value">R$ 18.320,00</h4>
+                <h4 class="metric-value">${formatCurrency(totalExpenses)}</h4>
                 <div class="metric-change negative">
                     <span class="material-symbols-outlined">arrow_downward</span>
                     <span>5,2% vs mês anterior</span>
@@ -474,7 +526,7 @@ function renderMetricCards() {
             </div>
             <div class="metric-content">
                 <p class="metric-label">Lucro Líquido</p>
-                <h4 class="metric-value">R$ 27.570,00</h4>
+                <h4 class="metric-value">${formatCurrency(netProfit)}</h4>
                 <div class="metric-change positive">
                     <span class="material-symbols-outlined">arrow_upward</span>
                     <span>18,9% vs mês anterior</span>
@@ -489,30 +541,15 @@ function renderCharts() {
         <article class="chart-card">
             <div class="card-header">
                 <h3>Vendas por Categoria</h3>
-                <div class="card-actions">
-                    <button class="btn-icon-small" id="refreshChart1">
-                        <span class="material-symbols-outlined">refresh</span>
-                    </button>
-                    <button class="btn-icon-small" id="exportChart1">
-                        <span class="material-symbols-outlined">download</span>
-                    </button>
-                </div>
             </div>
             <div class="chart-container">
                 <canvas id="salesChart"></canvas>
             </div>
         </article>
+
         <article class="chart-card">
             <div class="card-header">
                 <h3>Status de Pedidos</h3>
-                <div class="card-actions">
-                    <button class="btn-icon-small" id="refreshChart2">
-                        <span class="material-symbols-outlined">refresh</span>
-                    </button>
-                    <button class="btn-icon-small" id="exportChart2">
-                        <span class="material-symbols-outlined">download</span>
-                    </button>
-                </div>
             </div>
             <div class="chart-container">
                 <canvas id="ordersChart"></canvas>
@@ -525,51 +562,34 @@ function renderOrdersTable() {
     return `
         <div class="section-header">
             <h3>Pedidos Recentes</h3>
-            <div class="section-actions">
-                <div class="export-buttons">
-                    <button class="btn-secondary" id="exportPDF">
-                        <span class="material-symbols-outlined">picture_as_pdf</span>
-                        <span class="btn-text">PDF</span>
-                    </button>
-                    <button class="btn-secondary" id="exportExcel">
-                        <span class="material-symbols-outlined">table_chart</span>
-                        <span class="btn-text">Excel</span>
-                    </button>
-                </div>
-            </div>
+            <button class="btn-primary" onclick="loadPage('pedidos')">Ver Todos</button>
         </div>
         <div class="table-container">
             <table class="orders-table">
                 <thead>
                     <tr>
-                        <th>ID</th>
+                        <th>ID Pedido</th>
                         <th>Cliente</th>
                         <th>Produto</th>
                         <th>Data</th>
                         <th>Valor</th>
                         <th>Status</th>
-                        <th>Ações</th>
                     </tr>
                 </thead>
                 <tbody>
                     ${mockData.orders.slice(0, 5).map(order => `
                         <tr>
                             <td>#${order.id}</td>
-                            <td>${order.customer}</td>
+                            <td>
+                                <div class="customer-cell">
+                                    <div class="customer-avatar">${getInitials(order.customer)}</div>
+                                    <span>${order.customer}</span>
+                                </div>
+                            </td>
                             <td>${order.product}</td>
                             <td>${formatDate(order.date)}</td>
                             <td>${formatCurrency(order.value)}</td>
                             <td><span class="status-badge ${getStatusClass(order.status)}">${getStatusLabel(order.status)}</span></td>
-                            <td>
-                                <div class="action-buttons">
-                                    <button class="btn-icon" onclick="viewOrder(${order.id})">
-                                        <span class="material-symbols-outlined">visibility</span>
-                                    </button>
-                                    <button class="btn-icon" onclick="editOrder(${order.id})">
-                                        <span class="material-symbols-outlined">edit</span>
-                                    </button>
-                                </div>
-                            </td>
                         </tr>
                     `).join('')}
                 </tbody>

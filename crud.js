@@ -89,7 +89,7 @@ function saveCustomer(id) {
     customer.phone = document.getElementById('editCustomerPhone').value;
     customer.city = document.getElementById('editCustomerCity').value;
     customer.status = document.getElementById('editCustomerStatus').value;
-    
+    saveData();
     closeModal();
     showToast('Sucesso', 'Cliente atualizado com sucesso!', 'success');
     loadPage('clientes');
@@ -100,6 +100,7 @@ function deleteCustomer(id) {
         const index = mockData.customers.findIndex(c => c.id === id);
         if (index > -1) {
             mockData.customers.splice(index, 1);
+            saveData();
             showToast('Sucesso', 'Cliente excluído com sucesso!', 'success');
             loadPage('clientes');
         }
@@ -149,6 +150,7 @@ function addCustomer() {
     };
     
     mockData.customers.push(newCustomer);
+    saveData();
     closeModal();
     showToast('Sucesso', 'Cliente adicionado com sucesso!', 'success');
     loadPage('clientes');
@@ -226,7 +228,7 @@ function saveProduct(id) {
     product.price = parseFloat(document.getElementById('editProductPrice').value);
     product.stock = parseInt(document.getElementById('editProductStock').value);
     product.status = product.stock < product.minStock ? 'low-stock' : 'active';
-    
+    saveData();
     closeModal();
     showToast('Sucesso', 'Produto atualizado com sucesso!', 'success');
     loadPage('produtos');
@@ -237,6 +239,7 @@ function deleteProduct(id) {
         const index = mockData.products.findIndex(p => p.id === id);
         if (index > -1) {
             mockData.products.splice(index, 1);
+            saveData();
             showToast('Sucesso', 'Produto excluído com sucesso!', 'success');
             loadPage('produtos');
         }
@@ -293,6 +296,7 @@ function addProduct() {
     };
     
     mockData.products.push(newProduct);
+    saveData();
     closeModal();
     showToast('Sucesso', 'Produto adicionado com sucesso!', 'success');
     loadPage('produtos');
@@ -500,7 +504,7 @@ function saveExpense(id) {
     expense.category = document.getElementById('editExpenseCategory').value;
     expense.value = parseFloat(document.getElementById('editExpenseValue').value);
     expense.status = document.getElementById('editExpenseStatus').value;
-    
+    saveData();
     closeModal();
     showToast('Sucesso', 'Despesa atualizada com sucesso!', 'success');
     loadPage('despesas');
@@ -511,6 +515,7 @@ function deleteExpense(id) {
         const index = mockData.expenses.findIndex(e => e.id === id);
         if (index > -1) {
             mockData.expenses.splice(index, 1);
+            saveData();
             showToast('Sucesso', 'Despesa excluída com sucesso!', 'success');
             loadPage('despesas');
         }
@@ -560,6 +565,7 @@ function addExpense() {
     };
     
     mockData.expenses.push(newExpense);
+    saveData();
     closeModal();
     showToast('Sucesso', 'Despesa adicionada com sucesso!', 'success');
     loadPage('despesas');
@@ -659,4 +665,170 @@ function closeModal() {
     if (currentModal) {
         currentModal.classList.remove('active');
     }
+}
+
+// ========== PEDIDOS ==========
+
+function viewOrder(id) {
+    const order = mockData.orders.find(o => o.id === id);
+    if (!order) return;
+    
+    const content = `
+        <div class="detail-view">
+            <h4>Detalhes do Pedido</h4>
+            <div class="detail-grid">
+                <div class="detail-item"><strong>ID:</strong> #${order.id}</div>
+                <div class="detail-item"><strong>Cliente:</strong> ${order.customer}</div>
+                <div class="detail-item"><strong>Produto:</strong> ${order.product}</div>
+                <div class="detail-item"><strong>Data:</strong> ${formatDate(order.date)}</div>
+                <div class="detail-item"><strong>Valor:</strong> ${formatCurrency(order.value)}</div>
+                <div class="detail-item"><strong>Pagamento:</strong> ${order.paymentMethod}</div>
+                <div class="detail-item"><strong>Status:</strong> <span class="status-badge ${getStatusClass(order.status)}">${getStatusLabel(order.status)}</span></div>
+            </div>
+        </div>
+    `;
+    
+    showDetailModal('Pedido #' + id, content);
+}
+
+function editOrder(id) {
+    const order = mockData.orders.find(o => o.id === id);
+    if (!order) return;
+    
+    const content = `
+        <form id="editOrderForm" onsubmit="saveOrder(${id}); return false;">
+            <div class="form-group">
+                <label>Cliente</label>
+                <input type="text" id="editOrderCustomer" value="${order.customer}" required>
+            </div>
+            <div class="form-group">
+                <label>Produto</label>
+                <input type="text" id="editOrderProduct" value="${order.product}" required>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Valor</label>
+                    <input type="number" step="0.01" id="editOrderValue" value="${order.value}" required>
+                </div>
+                <div class="form-group">
+                    <label>Pagamento</label>
+                    <select id="editOrderPayment" required>
+                        <option value="Cartão de Crédito" ${order.paymentMethod === 'Cartão de Crédito' ? 'selected' : ''}>Cartão de Crédito</option>
+                        <option value="PIX" ${order.paymentMethod === 'PIX' ? 'selected' : ''}>PIX</option>
+                        <option value="Boleto" ${order.paymentMethod === 'Boleto' ? 'selected' : ''}>Boleto</option>
+                        <option value="Cartão de Débito" ${order.paymentMethod === 'Cartão de Débito' ? 'selected' : ''}>Cartão de Débito</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn-secondary" onclick="closeModal()">Cancelar</button>
+                <button type="submit" class="btn-primary">Salvar Alterações</button>
+            </div>
+        </form>
+    `;
+    
+    showDetailModal('Editar Pedido', content);
+}
+
+function saveOrder(id) {
+    const order = mockData.orders.find(o => o.id === id);
+    if (!order) return;
+    
+    order.customer = document.getElementById('editOrderCustomer').value;
+    order.product = document.getElementById('editOrderProduct').value;
+    order.value = parseFloat(document.getElementById('editOrderValue').value);
+    order.paymentMethod = document.getElementById('editOrderPayment').value;
+    
+    saveData();
+    closeModal();
+    showToast('Sucesso', 'Pedido atualizado com sucesso!', 'success');
+    loadPage('pedidos');
+}
+
+function changeOrderStatus(id) {
+    const order = mockData.orders.find(o => o.id === id);
+    if (!order) return;
+    
+    const content = `
+        <div class="status-change-container">
+            <p>Selecione o novo status para o pedido <strong>#${id}</strong>:</p>
+            <div class="status-options">
+                <button class="btn-status info" onclick="updateStatus(${id}, 'processing')">Processando</button>
+                <button class="btn-status warning" onclick="updateStatus(${id}, 'shipping')">Em Trânsito</button>
+                <button class="btn-status success" onclick="updateStatus(${id}, 'delivered')">Entregue</button>
+                <button class="btn-status danger" onclick="updateStatus(${id}, 'cancelled')">Cancelado</button>
+            </div>
+        </div>
+    `;
+    
+    showDetailModal('Alterar Status', content);
+}
+
+function updateStatus(id, newStatus) {
+    const order = mockData.orders.find(o => o.id === id);
+    if (order) {
+        order.status = newStatus;
+        saveData();
+        closeModal();
+        showToast('Sucesso', 'Status do pedido atualizado!', 'success');
+        loadPage('pedidos');
+    }
+}
+
+function openAddOrderModal() {
+    const content = `
+        <form id="addOrderForm" onsubmit="addOrder(); return false;">
+            <div class="form-group">
+                <label>Cliente</label>
+                <select id="newOrderCustomer" required>
+                    ${mockData.customers.map(c => `<option value="${c.name}">${c.name}</option>`).join('')}
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Produto</label>
+                <select id="newOrderProduct" required>
+                    ${mockData.products.map(p => `<option value="${p.name}">${p.name}</option>`).join('')}
+                </select>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Valor (R$)</label>
+                    <input type="number" step="0.01" id="newOrderValue" required>
+                </div>
+                <div class="form-group">
+                    <label>Pagamento</label>
+                    <select id="newOrderPayment" required>
+                        <option value="Cartão de Crédito">Cartão de Crédito</option>
+                        <option value="PIX">PIX</option>
+                        <option value="Boleto">Boleto</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn-secondary" onclick="closeModal()">Cancelar</button>
+                <button type="submit" class="btn-primary">Criar Pedido</button>
+            </div>
+        </form>
+    `;
+    
+    showDetailModal('Novo Pedido', content);
+}
+
+function addOrder() {
+    const newId = Math.max(...mockData.orders.map(o => o.id)) + 1;
+    const newOrder = {
+        id: newId,
+        customer: document.getElementById('newOrderCustomer').value,
+        product: document.getElementById('newOrderProduct').value,
+        date: new Date().toISOString().split('T')[0],
+        value: parseFloat(document.getElementById('newOrderValue').value),
+        paymentMethod: document.getElementById('newOrderPayment').value,
+        status: 'processing'
+    };
+    
+    mockData.orders.unshift(newOrder);
+    saveData();
+    closeModal();
+    showToast('Sucesso', 'Pedido criado com sucesso!', 'success');
+    loadPage('pedidos');
 }

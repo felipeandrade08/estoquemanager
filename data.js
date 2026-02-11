@@ -3,7 +3,9 @@
 // Dashboard Administrativo - Felipe Andrade
 // ========================================
 
-const mockData = {
+// Tentar carregar dados do localStorage ou usar padrão
+const savedData = localStorage.getItem('dashboardData');
+const mockData = savedData ? JSON.parse(savedData) : {
     // Clientes
     customers: [
         { id: 1, name: 'João Martins', email: 'joao.m@email.com', phone: '(11) 98765-4321', city: 'São Paulo', totalPurchases: 15, totalSpent: 45890.00, status: 'active' },
@@ -75,6 +77,11 @@ const mockData = {
         'pending': { 'pt-BR': 'Pendente', 'en-US': 'Pending', 'es-ES': 'Pendiente', class: 'warning' }
     }
 };
+
+// Função para salvar dados no localStorage
+function saveData() {
+    localStorage.setItem('dashboardData', JSON.stringify(mockData));
+}
 
 // Função para obter label traduzido de status
 function getStatusLabel(status, lang = 'pt-BR') {
