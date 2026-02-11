@@ -83,6 +83,12 @@ function saveData() {
     localStorage.setItem('dashboardData', JSON.stringify(mockData));
 }
 
+// Função para resetar dados (útil para debug/testes)
+function resetData() {
+    localStorage.removeItem('dashboardData');
+    location.reload();
+}
+
 // Função para obter label traduzido de status
 function getStatusLabel(status, lang = 'pt-BR') {
     return mockData.statusLabels[status]?.[lang] || status;

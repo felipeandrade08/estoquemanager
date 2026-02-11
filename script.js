@@ -109,7 +109,8 @@ function logout() {
     sessionStorage.removeItem('userSession');
     state.isAuthenticated = false;
     state.userData = null;
-    location.reload();
+    // Forçar redirecionamento para limpar estado
+    window.location.href = window.location.pathname;
 }
 
 function updateUserInfo(userData) {
@@ -314,7 +315,9 @@ document.querySelectorAll('.notification-close').forEach(btn => {
     btn.addEventListener('click', (e) => {
         e.stopPropagation();
         const item = btn.closest('.notification-item');
-        item.style.animation = 'fadeOut 0.3s ease-out';
+        item.style.opacity = '0';
+        item.style.transform = 'translateX(20px)';
+        item.style.transition = 'all 0.3s ease';
         setTimeout(() => {
             item.remove();
             updateNotificationCount();
@@ -601,9 +604,10 @@ function updateChartsTheme() {
 }
 
 function initHomePage() {
+    // Garantir que os elementos existam antes de inicializar
     setTimeout(() => {
-        initSalesChart();
-        initOrdersChart();
+        if (document.getElementById('salesChart')) initSalesChart();
+        if (document.getElementById('ordersChart')) initOrdersChart();
         
         // Event listeners dos botões
         document.getElementById('refreshChart1')?.addEventListener('click', () => {
