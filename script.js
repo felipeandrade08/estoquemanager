@@ -844,6 +844,8 @@ window.addEventListener('DOMContentLoaded', () => {
     // Aplicar idioma
     if (typeof applyTranslations === 'function') {
         applyTranslations(state.currentLang);
+    } else {
+        console.error('Função applyTranslations não encontrada!');
     }
     
     // Atualizar contador de notificações
