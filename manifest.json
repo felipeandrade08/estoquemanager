@@ -1,6 +1,6 @@
 {
-  "name": "Dashboard Administrativo - Felipe Andrade",
-  "short_name": "Dashboard",
+  "name": "EstoqueManager - Felipe Andrade",
+  "short_name": "EstoqueManager",
   "description": "Dashboard administrativo completo com análises em tempo real",
   "start_url": "/index.html",
   "display": "standalone",

@@ -4,6 +4,8 @@
 
 const translations = {
     'pt-BR': {
+        'app-title': 'EstoqueManager',
+        'login-title': 'EstoqueManager',
         // Menu
         'nav-home': 'Início',
         'nav-sales': 'Vendas',
@@ -92,6 +94,8 @@ const translations = {
     },
     
     'en-US': {
+        'app-title': 'EstoqueManager',
+        'login-title': 'EstoqueManager',
         // Menu
         'nav-home': 'Home',
         'nav-sales': 'Sales',
@@ -180,6 +184,8 @@ const translations = {
     },
     
     'es-ES': {
+        'app-title': 'EstoqueManager',
+        'login-title': 'EstoqueManager',
         // Menu
         'nav-home': 'Inicio',
         'nav-sales': 'Ventas',
